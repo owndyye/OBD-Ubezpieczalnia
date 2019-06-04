@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Export generator="Cache" version="25" zv="Cache for Windows (x86-64) 2016.2.1 (Build 803U_SU)" ts="2019-06-04 17:49:32">
+<Class name="Ubezpieczalnia.DyrektorFilii">
+<Super>%Persistent,%RelationshipObject,%Populate,%XML.Adaptor,%ZEN.DataModel.Adaptor,Ubezpieczalnia.Osoba</Super>
+<TimeChanged>65163,78938.168735</TimeChanged>
+<TimeCreated>65155,77354.251664</TimeCreated>
+
+<Property name="Email">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="pracuje">
+<Type>Ubezpieczalnia.Filia</Type>
+<Cardinality>one</Cardinality>
+<Inverse>zatrudnia</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Method name="WyswietlDane">
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[ 	Return "Imie:"_..Imie_"  Nazwisko:"_..Nazwisko_"  Pesel:"_..Pesel_"  NrTelefonu:"_..NrTelefonu_"  Email:"_..Email
+]]></Implementation>
+</Method>
+
+<Method name="PokazFilie">
+<FormalSpec>dyrektorID:%Integer</FormalSpec>
+<Implementation><![CDATA[
+ Set dyrektor = ##class(Ubezpieczalnia.DyrektorFilii).%OpenId(dyrektorID)
+
+ // wypisywanie filii, w ktorej pracuje dyrektor
+    
+    Set filia = dyrektor.pracuje.Miejscowosc
+    If (filia '= "") {
+        Write "Dyrektor ",dyrektor.Imie, dyrektor.Nazwisko, " pracuje w "," miejscowosci", filia 
+    }
+  Return ""
+]]></Implementation>
+</Method>
+
+<Index name="Dyrektor">
+<Properties>pracuje</Properties>
+</Index>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Ubezpieczalnia.DyrektorFiliiD</DataLocation>
+<DefaultData>DyrektorFiliiDefaultData</DefaultData>
+<IdLocation>^Ubezpieczalnia.DyrektorFiliiD</IdLocation>
+<IndexLocation>^Ubezpieczalnia.DyrektorFiliiI</IndexLocation>
+<StreamLocation>^Ubezpieczalnia.DyrektorFiliiS</StreamLocation>
+<Data name="DyrektorFiliiDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Email</Value>
+</Value>
+<Value name="3">
+<Value>Filia</Value>
+</Value>
+<Value name="4">
+<Value>Pesel</Value>
+</Value>
+<Value name="5">
+<Value>NrTelefonu</Value>
+</Value>
+<Value name="6">
+<Value>Imie</Value>
+</Value>
+<Value name="7">
+<Value>Nazwisko</Value>
+</Value>
+<Value name="8">
+<Value>pracuje</Value>
+</Value>
+<Value name="9">
+<Value>InverseReference</Value>
+</Value>
+<Value name="10">
+<Value>ElementType</Value>
+</Value>
+<Value name="11">
+<Value>Cardinality</Value>
+</Value>
+<Value name="12">
+<Value>InversePersistent</Value>
+</Value>
+<Value name="13">
+<Value>InverseProperty</Value>
+</Value>
+<Value name="14">
+<Value>Persistent</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Ubezpieczalnia.Filia">
+<Super>%Persistent,%Populate,%XML.Adaptor,%ZEN.DataModel.Adaptor,%RelationshipObject</Super>
+<TimeChanged>65163,59993.53142</TimeChanged>
+<TimeCreated>65155,77773.545616</TimeCreated>
+
+<Property name="Miejscowosc">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="KodPocztowy">
+<Type>%String</Type>
+<Required>1</Required>
+<Parameter name="MAXLEN" value="6"/>
+</Property>
+
+<Property name="Ulica">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Numer">
+<Type>%Integer</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="zatrudnia">
+<Type>Ubezpieczalnia.DyrektorFilii</Type>
+<Cardinality>many</Cardinality>
+<Inverse>pracuje</Inverse>
+<Relationship>1</Relationship>
+</Property>
+
+<Method name="PokazDyrektora">
+<FormalSpec>filiaID:%Integer</FormalSpec>
+<Implementation><![CDATA[
+ Set filia = ##class(Ubezpieczalnia.Filia).%OpenId(filiaID)
+
+ // wypisywanie wszystkich pracowników filii
+ Set key = ""
+
+ Do {
+    Set dyrektor = filia.zatrudnia.GetNext(.key)
+    If (dyrektor '= "") {
+        Write "Zatrudniony ","Imie:",dyrektor.Imie,"  Nazwisko:",dyrektor.Nazwisko, "  Email:",dyrektor.Email, "  Siedziba:",filia.Miejscowosc ,!
+    }
+ } While (key '= "")
+  Return ""
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Ubezpieczalnia.FiliaD</DataLocation>
+<DefaultData>FiliaDefaultData</DefaultData>
+<IdLocation>^Ubezpieczalnia.FiliaD</IdLocation>
+<IndexLocation>^Ubezpieczalnia.FiliaI</IndexLocation>
+<StreamLocation>^Ubezpieczalnia.FiliaS</StreamLocation>
+<Data name="FiliaDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Miejscowosc</Value>
+</Value>
+<Value name="3">
+<Value>KodPocztowy</Value>
+</Value>
+<Value name="4">
+<Value>Ulica</Value>
+</Value>
+<Value name="5">
+<Value>Numer</Value>
+</Value>
+<Value name="6">
+<Value>zatrudnia</Value>
+</Value>
+<Value name="7">
+<Value>InverseReference</Value>
+</Value>
+<Value name="8">
+<Value>ElementType</Value>
+</Value>
+<Value name="9">
+<Value>Cardinality</Value>
+</Value>
+<Value name="10">
+<Value>InversePersistent</Value>
+</Value>
+<Value name="11">
+<Value>InverseProperty</Value>
+</Value>
+<Value name="12">
+<Value>Persistent</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Ubezpieczalnia.Klient">
+<Super>%Persistent,%Populate,%XML.Adaptor,%ZEN.DataModel.Adaptor,Ubezpieczalnia.Osoba</Super>
+<TimeChanged>65162,69646.860615</TimeChanged>
+<TimeCreated>65155,76937.99608</TimeCreated>
+
+<Property name="typ">
+<Type>TypKlienta</Type>
+<Required>1</Required>
+</Property>
+
+<Method name="WyswietlDane">
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[ Return "Imie:"_..Imie_"  Nazwisko:"_..Nazwisko_"  Pesel:"_..Pesel_"  NrTelefonu:"_..NrTelefonu_"  NazwaTypuKlienta:"_..typ.NazwaTypuKlienta_"  PriorytetObslugi: "_..typ.Priorytet_"  Znizka:"_..typ.Znizka
+]]></Implementation>
+</Method>
+
+<Method name="ZmienPriorytet">
+<FormalSpec>klient:%String,priorytet:%String</FormalSpec>
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[
+		Set klient.typ.Priorytet = priorytet
+		//zapis do bazy
+		Set sc3 = klient.%Save()
+		if $$$ISERR(sc3)
+		{
+        do $system.Status.DisplayError(sc3)
+    	}
+		Return "Zmieniono priortytet dla klienta na:"_priorytet
+]]></Implementation>
+</Method>
+
+<Method name="ZmienZnizke">
+<FormalSpec>klient:%String,znizka:%Integer</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+ 		Set klient.typ.Znizka = znizka
+		//zapis do bazy
+		Set sc3 = klient.%Save()
+		if $$$ISERR(sc3)
+		{
+        do $system.Status.DisplayError(sc3)
+    	}
+		Return znizka
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Ubezpieczalnia.KlientD</DataLocation>
+<DefaultData>KlientDefaultData</DefaultData>
+<IdLocation>^Ubezpieczalnia.KlientD</IdLocation>
+<IndexLocation>^Ubezpieczalnia.KlientI</IndexLocation>
+<StreamLocation>^Ubezpieczalnia.KlientS</StreamLocation>
+<Data name="KlientDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Imie</Value>
+</Value>
+<Value name="3">
+<Value>Nazwisko</Value>
+</Value>
+<Value name="4">
+<Value>Pesel</Value>
+</Value>
+<Value name="5">
+<Value>NrTelefonu</Value>
+</Value>
+<Value name="6">
+<Value>typ</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Ubezpieczalnia.Osoba">
+<Abstract>1</Abstract>
+<Super>%Persistent,%Populate</Super>
+<TimeChanged>65162,68852.393781</TimeChanged>
+<TimeCreated>65155,62192.821414</TimeCreated>
+
+<Property name="Imie">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Nazwisko">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Pesel">
+<Type>%Integer</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="NrTelefonu">
+<Type>%Integer</Type>
+<Required>1</Required>
+</Property>
+
+<Method name="WyswietlDane">
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[ Return "Imie:"_..Imie_" Nazwisko:"_..Nazwisko_" Pesel:"_..Pesel_" NrTelefonu:"_..NrTelefonu
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Ubezpieczalnia.OsobaD</DataLocation>
+<DefaultData>OsobaDefaultData</DefaultData>
+<IdLocation>^Ubezpieczalnia.OsobaD</IdLocation>
+<IndexLocation>^Ubezpieczalnia.OsobaI</IndexLocation>
+<StreamLocation>^Ubezpieczalnia.OsobaS</StreamLocation>
+<Data name="OsobaDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Imie</Value>
+</Value>
+<Value name="3">
+<Value>Nazwisko</Value>
+</Value>
+<Value name="4">
+<Value>Pesel</Value>
+</Value>
+<Value name="5">
+<Value>NrTelefonu</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+<Class name="Ubezpieczalnia.Pracownik">
+<Super>%Persistent,%Populate,%XML.Adaptor,%ZEN.DataModel.Adaptor,Ubezpieczalnia.Osoba</Super>
+<TimeChanged>65162,69473.213927</TimeChanged>
+<TimeCreated>65155,63913.926894</TimeCreated>
+
+<Property name="Wynagrodzenie">
+<Type>%Integer</Type>
+<Required>1</Required>
+</Property>
+
+<Method name="WyswietlDane">
+<ReturnType>%String</ReturnType>
+<Implementation><![CDATA[ 	Return "Imie:"_..Imie_"  Nazwisko:"_..Nazwisko_"  Pesel:"_..Pesel_"  NrTelefonu:"_..NrTelefonu_"  Wynagrodzenie:"_..Wynagrodzenie
+]]></Implementation>
+</Method>
+
+<Method name="ZwiekszWynagrodzenie">
+<FormalSpec>pracownik:%String,Arg1:%Integer</FormalSpec>
+<ReturnType>%Integer</ReturnType>
+<Implementation><![CDATA[
+		set ..Wynagrodzenie = ..Wynagrodzenie + Arg1 
+		Set pracownik.Wynagrodzenie = ..Wynagrodzenie
+		//zapis do bazy
+		Set sc3 = pracownik.%Save()
+		if $$$ISERR(sc3)
+		{
+        do $system.Status.DisplayError(sc3)
+    	}
+		set zarobek = ..Wynagrodzenie
+		Return zarobek
+]]></Implementation>
+</Method>
+
+<Storage name="Default">
+<Type>%Library.CacheStorage</Type>
+<DataLocation>^Ubezpieczalnia.PracownikD</DataLocation>
+<DefaultData>PracownikDefaultData</DefaultData>
+<IdLocation>^Ubezpieczalnia.PracownikD</IdLocation>
+<IndexLocation>^Ubezpieczalnia.PracownikI</IndexLocation>
+<StreamLocation>^Ubezpieczalnia.PracownikS</StreamLocation>
+<ExtentSize>14</ExtentSize>
+<Data name="PracownikDefaultData">
+<Value name="1">
+<Value>%%CLASSNAME</Value>
+</Value>
+<Value name="2">
+<Value>Imie</Value>
+</Value>
+<Value name="3">
+<Value>Nazwisko</Value>
+</Value>
+<Value name="4">
+<Value>Pesel</Value>
+</Value>
+<Value name="5">
+<Value>NrTelefonu</Value>
+</Value>
+<Value name="6">
+<Value>Wynagrodzenie</Value>
+</Value>
+</Data>
+<Property name="%%CLASSNAME">
+<Selectivity>100.0000%</Selectivity>
+<AverageFieldSize>1</AverageFieldSize>
+</Property>
+<Property name="%%ID">
+<Selectivity>1</Selectivity>
+<AverageFieldSize>3</AverageFieldSize>
+</Property>
+<Property name="Imie">
+<Selectivity>7.1429%</Selectivity>
+<AverageFieldSize>7.86</AverageFieldSize>
+</Property>
+<Property name="Nazwisko">
+<Selectivity>7.1429%</Selectivity>
+<AverageFieldSize>4.79</AverageFieldSize>
+</Property>
+<Property name="NrTelefonu">
+<Selectivity>14.2857%</Selectivity>
+<AverageFieldSize>1</AverageFieldSize>
+</Property>
+<Property name="Pesel">
+<Selectivity>14.2857%</Selectivity>
+<AverageFieldSize>1</AverageFieldSize>
+</Property>
+<Property name="Wynagrodzenie">
+<Selectivity>7.1429%</Selectivity>
+<AverageFieldSize>9</AverageFieldSize>
+</Property>
+<SQLMap name="IDKEY">
+<BlockCount>-4</BlockCount>
+</SQLMap>
+</Storage>
+</Class>
+
+
+<Class name="Ubezpieczalnia.TypKlienta">
+<Super>%SerialObject,%Populate,%XML.Adaptor,%ZEN.DataModel.Adaptor</Super>
+<TimeChanged>65161,64606.894105</TimeChanged>
+<TimeCreated>65155,76890.435991</TimeCreated>
+
+<Property name="NazwaTypuKlienta">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Priorytet">
+<Type>%String</Type>
+<Required>1</Required>
+</Property>
+
+<Property name="Znizka">
+<Type>%Integer</Type>
+<Required>1</Required>
+</Property>
+
+<Storage name="Default">
+<Type>%Library.CacheSerialState</Type>
+<State>TypKlientaState</State>
+<StreamLocation>^Ubezpieczalnia.TypKlientaS</StreamLocation>
+<Data name="TypKlientaState">
+<Value name="1">
+<Value>NazwaTypuKlienta</Value>
+</Value>
+<Value name="2">
+<Value>Priorytet</Value>
+</Value>
+<Value name="3">
+<Value>Znizka</Value>
+</Value>
+</Data>
+</Storage>
+</Class>
+
+
+</Export>
